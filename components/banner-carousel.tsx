@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { getActiveBanners } from "@/lib/banners"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 interface Banner {
   id: string
@@ -90,13 +91,13 @@ export function BannerCarousel() {
               className="w-full h-full object-cover"
             />
             {/* Overlay with text */}
-            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center text-white p-4">
                 <h2 className="text-2xl md:text-4xl font-bold mb-2">{banner.title}</h2>
                 {banner.description && <p className="text-sm md:text-lg opacity-90">{banner.description}</p>}
                 {banner.click_route && (
                   <Button
-                    className="mt-4"
+                    className="mt-4 rounded-full font-bold"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleBannerClick(banner)
