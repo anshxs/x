@@ -229,7 +229,7 @@ export default function CartPage() {
                         </span>
                       )}
                       <span className="font-semibold text-2xl text-green-700">
-                        ₹{price}
+                        ₹{getEffectivePrice(item)}
                       </span>
                       {discount > 0 && (
                         <span className="text-white text-xs bg-orange-500 px-2 rounded-full">
