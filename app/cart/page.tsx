@@ -164,15 +164,16 @@ export default function CartPage() {
         <div className="space-y-6">
           {cartItems.map((item) => {
             const product = item.product;
-            const price = product?.regular_price || 0;
-            const discount =
-              product?.original_price && price < product.original_price
-                ? Math.round(
-                    ((product.original_price - price) /
-                      product.original_price) *
-                      100
-                  )
-                : 0;
+const eventPrice = item.event_product?.event_price;
+const price = eventPrice ?? product?.regular_price ?? 0;
+
+const discount =
+  product?.original_price && price < product.original_price
+    ? Math.round(
+        ((product.original_price - price) / product.original_price) * 100
+      )
+    : 0;
+
 
             return (
               <Card key={item.id} className="border">
