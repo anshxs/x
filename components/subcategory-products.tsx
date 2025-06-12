@@ -87,7 +87,7 @@ function SubcategorySection({
   };
 
   return (
-    <div className="rounded-lg bg-secondary px-4 py-2 mb-6">
+    <div className="rounded-lg bg-gray-50 px-4 py-2 mb-6">
       {/* Subcategory Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-medium capitalize my-4">{subcategory}</h2>

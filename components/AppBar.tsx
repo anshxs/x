@@ -11,6 +11,32 @@ export default function AppBar() {
   const router = useRouter();
   const [categories, setCategories] = useState<string[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [itemCount, setItemCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) return;
+
+      const { data, error } = await supabase
+        .from("cart")
+        .select("quantity")
+        .eq("user_id", user.id);
+
+      if (!error && data) {
+        const count = data.reduce((sum, item) => sum + item.quantity, 0);
+        setItemCount(count);
+      } else {
+        console.error("Failed to fetch cart count:", error?.message);
+      }
+    };
+
+    fetchCartCount();
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -83,11 +109,17 @@ export default function AppBar() {
             <Button
               variant="ghost"
               onClick={() => router.push("/cart")}
-              className="flex flex-col gap-0"
+              className="relative flex flex-col gap-0"
               size="icon"
             >
-              <ShoppingBag />
+              <ShoppingBag className="w-5 h-5" />
               <p className="text-[9px]">Cart</p>
+
+              {itemCount > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full">
+                  {itemCount}
+                </span>
+              )}
             </Button>
           </div>
         </div>
