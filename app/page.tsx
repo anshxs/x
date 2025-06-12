@@ -25,33 +25,49 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("authorized_by_platform", true)
-        .gte("stock", 1)
-
-      if (error) {
-        console.error("Error fetching products:", error)
-        setLoading(false)
-        return
-      }
-
-      const categorized: { [key: string]: any[] } = {}
-
-      for (const category of CATEGORIES) {
-        categorized[category] = data.filter(
-          (product) => product.category === category
+  const fetchProducts = async () => {
+    const { data, error } = await supabase
+      .from("products")
+      .select(`
+        *,
+        event_products (
+          event_price
         )
-      }
+      `)
+      .eq("authorized_by_platform", true)
+      .gte("stock", 1)
 
-      setProductsByCategory(categorized)
+    if (error) {
+      console.error("Error fetching products:", error)
       setLoading(false)
+      return
     }
 
-    fetchProducts()
-  }, [])
+    const updatedProducts = data.map((product) => {
+      if (product.event_products && product.event_products.length > 0) {
+        // Override regular_price with event_price from the first matching event
+        return {
+          ...product,
+          regular_price: product.event_products[0].event_price,
+        }
+      }
+      return product
+    })
+
+    const categorized: { [key: string]: any[] } = {}
+
+    for (const category of CATEGORIES) {
+      categorized[category] = updatedProducts.filter(
+        (product) => product.category === category
+      )
+    }
+
+    setProductsByCategory(categorized)
+    setLoading(false)
+  }
+
+  fetchProducts()
+}, [])
 
   if (loading) return <div className="text-center py-20">Loading products...</div>
 

@@ -32,32 +32,38 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCategoryData = async () => {
-      try {
-        setLoading(true);
-        const data = await getCategoryData(category);
-        // Ensure all required Product fields are present
-        const fixedProducts = data.products.map((product: any) => ({
+  const fetchCategoryData = async () => {
+    try {
+      setLoading(true);
+      const data = await getCategoryData(category);
+
+      // Override price if event_price exists
+      const fixedProducts = data.products.map((product: any) => {
+        const eventPrice = product.event_products?.[0]?.event_price;
+        return {
           ...product,
           original_price: product.original_price,
           created_at: product.created_at,
-        }));
-        setCategoryData({
-          ...data,
-          products: fixedProducts,
-        });
-      } catch (error) {
-        console.error("Error fetching category data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+          regular_price: eventPrice ?? product.regular_price,
+        };
+      });
 
-    if (category) {
-      fetchCategoryData();
+      setCategoryData({
+        ...data,
+        products: fixedProducts,
+      });
+    } catch (error) {
+      console.error("Error fetching category data:", error);
+    } finally {
+      setLoading(false);
     }
-    console.log(categoryData?.products);
-  }, [category]);
+  };
+
+  if (category) {
+    fetchCategoryData();
+  }
+}, [category]);
+
 
   if (loading) {
     return (

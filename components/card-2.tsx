@@ -49,7 +49,7 @@ export function ProductCard2({
 
   // Calculate discount percentage
   const discountAmount = original_price - regular_price
-  const discountPercentage = Math.round((discountAmount / regular_price) * 100)
+  const discountPercentage = Math.round((discountAmount / original_price) * 100)
 
   // Check if product is new (less than 20 raters)
   const isNew = totalRaters < 20
