@@ -59,18 +59,15 @@ export default function CartPage() {
       if (userError || !user) return;
 
       const { data, error } = await supabase
-        .from("cart")
-        .select(
-          `
+  .from("cart")
+  .select(`
     *,
     product:product_id(*),
     seller:seller_id(business_name, status),
-    event_product:event_products!event_products_product_id_fkey(
-      event_price, product_id, shop_id
-    )
-  `
-        )
-        .eq("user_id", user.id);
+    event_product:event_products(event_price)
+  `)
+  .eq("user_id", user.id);
+
 
       if (error) {
         console.error("Error fetching cart:", error.message);
